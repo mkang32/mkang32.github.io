@@ -28,6 +28,7 @@ github_username:  mkang32
 
 # Build settings
 # theme: minima
+comments: true
 plugins:
   - jekyll-feed
   - jemoji
