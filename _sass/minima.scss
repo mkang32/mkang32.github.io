@@ -49,3 +49,9 @@ $on-laptop:        800px !default;
   "minima/layout",
   "minima/syntax-highlighting"
 ;
+
+
+// ---- custom css added by me
+.table-wrapper {
+  overflow-x: scroll;
+}
