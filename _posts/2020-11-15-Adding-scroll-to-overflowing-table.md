@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Adding a horizontal scroll to overflowing markdown table in Jekyll
+title: Adding a Horizontal Scroll to Overflowing Markdown Table in HTML
 date: 2020-11-15 18:58 -0500
 ---
 

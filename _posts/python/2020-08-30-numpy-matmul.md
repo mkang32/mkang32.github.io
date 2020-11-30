@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "What should I use for dot product and matrix multiplication?: NumPy multiply vs. dot vs. matmul vs. @"
+title:  "What Should I Use for Dot Product and Matrix Multiplication?: NumPy multiply vs. dot vs. matmul vs. @"
 date:   2020-08-30 00:00:00 -0400
 categories: python
 ---

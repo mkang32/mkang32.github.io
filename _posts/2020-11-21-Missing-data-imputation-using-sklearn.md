@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Missing data imputation using sklearn"
+title:  "Missing Data Imputation Using sklearn"
 date:   2020-11-21 00:00:00 -0400
 categories: python
 ---

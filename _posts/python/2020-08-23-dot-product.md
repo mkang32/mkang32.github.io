@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "What are dot product and matrix multiplication?"
+title:  "What Are Dot Product and Matrix Multiplication?"
 date:   2020-08-23 15:56:00 -0400
 categories: python
 ---

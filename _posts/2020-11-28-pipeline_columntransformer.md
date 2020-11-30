@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Combining feature engineering and model fitting (Pipeline vs. ColumnTransformer)"
+title:  "Combining Feature Engineering and Model Fitting (Pipeline vs. ColumnTransformer)"
 date:   2020-11-28 00:00:00 -0400
 categories: python
 ---
