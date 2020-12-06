@@ -69,3 +69,12 @@
   .vi    { color: #008080 } // Name.Variable.Instance
   .il    { color: #099 } // Literal.Number.Integer.Long
 }
+
+pre.output {
+  background-color: white;
+  color: #555;
+  font-size: medium ;
+  font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+  width: 100%;
+  display: inline-block;
+}
