@@ -45,20 +45,24 @@ Anyway, steps I think worked:
     ➜  ruby -v
     ruby 2.6.3p62 (2019-04-16 revision 67580) [universal.x86_64-darwin20]
     ```
-2. Install 2.7.2 version
+2. Install Ruby Version Manager (rvm)
+    ```bash
+    ➜  curl -sSL https://raw.githubusercontent.com/rvm/rvm/master/binscripts/rvm-installer | bash -s stable
+    ```
+3. Install 2.7.2 version using rvm
     ```bash
     ➜  rvm install "ruby-2.7.2"
     ```
-3. Check Ruby version again
+4. Check Ruby version again
     ```bash
     ➜  ruby -v
     ruby 2.7.2p137 (2020-10-01 revision 5445e04352) [x86_64-darwin20]
     ```
-4. Bundle install
+5. Bundle install
     ```bash
     ➜  bundle install
     ```
-5. Run bundle
+6. Run bundle
     ```bash
     ➜  bundle exec jekyll serve
     ```
@@ -68,19 +72,17 @@ And it worked!
 
 ## Some other things I tried
 
-1. Installing Ruby through Homebrew: didn't solve the issue.
+1. Installing Ruby through Homebrew: didn't solve the issue but I don't know if this actually and eventually helped or 
+not.
 
     ```bash
     ➜  brew install ruby
     ```
 
-2. Installing Ruby Version Manager (rvm) and  then installing the latest version of Ruby [(ref)](https://stackoverflow
-.com/a/38194139/9449085): didn't update the version
+2. Installing the latest version of Ruby [(ref)](https://stackoverflow
+.com/a/38194139/9449085) using rvm: didn't update the version
  for some reason.
 
     ```bash
-    ➜  curl -sSL https://raw.githubusercontent.com/rvm/rvm/master/binscripts/rvm-installer | bash -s stable
     ➜  rvm install ruby@latest
     ```
-
-I don't know any of these actually and eventually helped or not.
