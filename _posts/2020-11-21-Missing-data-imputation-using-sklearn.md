@@ -637,7 +637,7 @@ X_train_knn_impute.head()
 
 
 
-<div class="table-wrapper" markdown="block">
+<div>
 <style scoped>
     .dataframe tbody tr th:only-of-type {
         vertical-align: middle;
