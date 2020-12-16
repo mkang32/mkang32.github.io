@@ -252,3 +252,33 @@ table {
     border: 1px solid $grey-color-light;
   }
 }
+
+/**
+<!-- Begin section for dataframe table formatting -->
+ */
+
+table.dataframe {
+    width: 100%;
+    margin-left:auto;
+    margin-right:auto;
+    display: block;
+    overflow: auto;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    line-height: 20px;
+    text-align: center;
+    border: none;
+}
+table.dataframe th {
+  font-weight: bold;
+  padding: 6px;
+}
+table.dataframe td {
+  padding: 4px;
+}
+table.dataframe tr:hover {
+  background: #b8d1f3;
+}
+/**
+<!-- End section for dataframe table formatting -->
+ */
