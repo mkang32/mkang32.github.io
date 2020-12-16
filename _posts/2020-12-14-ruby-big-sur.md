@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Getting "Failed to build gem native extension" error after upgrading to Mac OS Big Sur
+title: Getting "Failed to build gem native extension" Error After Upgrading to Mac OS Big Sur
 date: 2020-12-14 00:00 -0500
 ---
 
