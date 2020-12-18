@@ -6,9 +6,13 @@ categories: python
 ---
 
 Recently, I came across a few articles mentioning Facebook's Prophet library that looked interesting (although the 
-initial release is almost 3 years ago!), so I decided to dig more into it this weekend.
+initial release was almost 3 years ago!), so I decided to dig more into it.
 
-Prophet is an open source library developed by Facebook which aims to make time-series forecasting easy and scalable. It is a type of a generalized additive model (GAM), which uses regression model with potentially non-linear smoothers. It is called additive because it adds multiple decomposed parts to explain some trends. For example, Prophet uses the following components: 
+Prophet is an open-source library developed by Facebook which aims to make time-series forecasting easier and more 
+scalable.
+ It is a type of generalized additive model (GAM), which uses a regression model with potentially non-linear 
+ smoothers. It is called additive because it adds multiple decomposed parts to explain some trends. For example, 
+ Prophet uses the following components: 
 
 $$ y(t) = g(t) + s(t) + h(t) + e(t) $$
 
@@ -16,9 +20,9 @@ where,
 $g(t)$: Growth. Big trend. Non-periodic changes.   
 $s(t)$: Seasonality. Periodic changes (e.g. weekly, yearly, etc.) represented by Fourier Series.  
 $h(t)$: Holiday effect that represents irregular schedules.   
-$e(t)$: Error. Any idiosyncratic changes not explained by the model. 
-s
-In this post, I will explore basic concepts and main API endpoints of the Prophet library.
+$e(t)$: Error. Any idiosyncratic changes not explained by the model.  
+
+In this post, I will explore main concepts and API endpoints of the Prophet library.
 
 # Table of Contents 
 1. [Prepare Data](#prep)
@@ -33,10 +37,15 @@ In this post, I will explore basic concepts and main API endpoints of the Prophe
 <a id=prep></a>
 # 1. Prepare Data
 
-Let's prepare the data we will use in this tutorial. This U.S. traffic volumn data set is available for download [here](https://fred.stlouisfed.org/series/TRFVOLUSM227NFWA). It is monthly traffic volumn (miles traveled) on public roadways collected by state highway agencies. The data is from January 1970 until September 2020. The unit is millions miles. 
+In this post. We will use the U.S. traffic volume data available 
+[here](https://fred.stlouisfed.org/series/TRFVOLUSM227NFWA), which is a monthly traffic volume (miles traveled) on 
+public roadways from January 1970 until September 2020. The unit is a million miles. 
 
 
 ```python
+import pandas as pd
+import matplotlib.pyplot as plt
+
 # to mute Pandas warnings Prophet needs to fix
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -44,9 +53,6 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 ```python
-import pandas as pd
-
-df = pd.read_csv('../data/vehicle_miles_traveled.csv')
 df.head()
 ```
 
@@ -105,7 +111,7 @@ df.head()
 
 
 
-Prophet is hard-coded to use sepcific column names; `ds` for dates and `y` for the target variable we want to predict.
+Prophet is hard-coded to use specific column names; `ds` for dates and `y` for the target variable we want to predict.
 
 
 ```python
@@ -115,25 +121,9 @@ df.columns = ['ds', 'y']
 df['ds'] = pd.to_datetime(df['ds'])
 ```
 
-When plotting the original data, we can see there is a **big, growing trend** in the traffic volumn, although there seems to be some stagnant or even decreasing trends (**change of rate**) around 1980, 2008 due to the subprime mortage crisis, and most strikingly, 2020 due to the COVID recession. Checking how Prophet can handle and adapt to these changes would be interesting.
-
-Another thing that catches my eyes is that there is a **seasonal, periodic trend** that seems to repeat in each year. It goes up until middle of the year and goes down again. Will Prophet capture this as well?
-
-
-```python
-import matplotlib.pyplot as plt
-
-# plot raw data 
-fig, ax = plt.subplots(figsize=(12, 7))
-plt.plot(df['ds'], df['y'])
-plt.xlabel('Time')
-plt.ylabel('Millions of Miles')
-plt.title('The U.S. Traffic Volumn Trends (Miles Treveled)')
-plt.grid(True)
-plt.tight_layout()
-plt.show()
-```
-
+When plotting the original data, we can see there is a **big, growing trend** in the traffic volume, although there
+seems to be some stagnant or even decreasing trends (**change of rate**) around 1980, 2008, and most strikingly, 2020
+. Checking how Prophet can handle these changes would be interesting. There is also a **seasonal, periodic trend** that seems to repeat each year. It goes up until the middle of the year and goes down again. Will Prophet capture this as well?
 
 <div style="text-align:center">
 <img src="{{site.baseurl}}/images/2020-12-15-prophet-intro/output_7_0.png">
@@ -142,7 +132,9 @@ plt.show()
     
 
 
-For train test split, do not forget that we cannot do a random split for time-series data. We use ONLY the earlier part of data for training and the later parts of data for testing given a cut-off point. Here, let's use 2019/1/1 as our cut-off point. 
+For train test split, do not forget that we cannot do a random split for time-series data. We use ONLY the earlier 
+part of data for training and the later part of data for testing given a cut-off point. Here, we use 2019/1/1 as our
+ cut-off point. 
 
 
 ```python
@@ -166,9 +158,9 @@ print(f"Number of months in test data: {len(test)}")
 <a id=train></a>
 # 2. Train And Predict
 
-Let's train a Prophet model. It's actually pretty simple. You just initialize an object and `fit`! That's all.
+Let's train a Prophet model. You just initialize an object and `fit`! That's all.
 
-Prophet warns that it disabled weekly and daily seasonaility. That's fine because our data set is monthly and does not have more granular interval to capture weekly or daily seasonality.
+Prophet warns that it disabled weekly and daily seasonality. That's fine because our data set is monthly so there is no weekly or daily seasonality.
 
 
 ```python
@@ -189,7 +181,9 @@ m.fit(train)
 
 When making predictions with Prophet, we need to prepare a special object called future dataframe. It is a Pandas DataFrame with a single column `ds` that includes all datetime within the training data plus additional periods given by user. 
 
-The parameter `periods` is basically the number of points (rows) to predict after the end of the training data. The interval (parameter `freq`) is set to 'D' (day) by default, so we need to adjust it to 'MS' (month start) as our data is monthly. I set `periods=21` as it is the number points in the test data.
+The parameter `periods` is basically the number of points (rows) to predict after the end of the training data. The 
+interval (parameter `freq`) is set to 'D' (day) by default, so we need to adjust it to 'MS' (month start) as our data
+ is monthly. I set `periods=21` as it is the number of points in the test data.
 
 
 ```python
@@ -319,7 +313,9 @@ It's time to make actual predictions. It's simple - just `predict` with the plac
 forecast = m.predict(future)
 ```
 
-Prophet has a nice built-in plotting function to visualize forecast data. Black dots are for actual data and blue lines are prediction. You can also use matplotlib functions to adjust the figure, such as adding legend or adding xlim or ylim.
+Prophet has a nice built-in plotting function to visualize forecast data. Black dots are for actual data and the blue 
+line is prediction. You can also use matplotlib functions to adjust the figure, such as adding legend or adding 
+xlim or ylim.
 
 
 ```python
@@ -340,7 +336,7 @@ plt.show()
 <a id=components></a>
 # 3. Check Components
 
-So, what is in our forecast data? Let's take a look.
+So, what is in the forecast DataFrame? Let's take a look.
 
 
 ```python
@@ -492,7 +488,7 @@ There are many components in it but the main thing that you would care about is 
 
 - Final predictions: `yhat`, `yhat_lower`, and `yhat_upper`
 
-Other columns are components that comprise the final prediction as we discussed in the introduction. Let's compare Prophet's additive components and what we see in our forecast DataFrame. 
+Other columns are components that comprise the final prediction as we discussed in the introduction. Let's compare Prophet's components and what we see in our forecast DataFrame. 
 
 $$y(t) = g(t) + s(t) + h(t) + e(t) $$
 
@@ -502,9 +498,11 @@ $$y(t) = g(t) + s(t) + h(t) + e(t) $$
 
 The `additive_terms` represent the total seasonality effect, which is the same as yearly seasonality as we disabled weekly and daily seasonalities. All `multiplicative_terms` are zero because we used additive seasonality mode by default instead of multiplicative seasonality mode, which I will explain later.
 
-Holiday effect ($h(t)$) is also not represented here as it's hourly data and we did not specify holidays for this data.
+Holiday effect ($h(t)$) is not present here as it's yearly data.
 
-Prophet also has a nice built-in function for plotting each component. When we plot our forecast data, we see two components; general growth trend and yearly seasonality that appears throughout the years. 
+Prophet also has a nice built-in function for plotting each component. When we plot our forecast data, we see two 
+components; general growth trend and yearly seasonality that appears throughout the years. If we had more components 
+such as weekly or daily seasonality, they would have been presented here as well.
 
 
 ```python
@@ -524,7 +522,8 @@ fig = m.plot_components(forecast)
 
 ## 4.1. Evaluate the model on one test set
 
-So, how good is our model? One way we can understand the model performance in this case is to simply calculate the root mean squared error (RMSE) between the actual and predicted values of the above test period.
+How good is our model? One way we can understand the model performance, in this case, is to simply calculate the 
+root mean squared error (RMSE) between the actual and predicted values of the above test period.
 
 
 ```python
@@ -541,21 +540,9 @@ print(f"RMSE: {round(rmse(predictions, actuals))}")
 </pre>
 
 
-However, this probably under-represents the general model performance because our data has a drastic change in the middle of test period which is a pattern that has never been seen before. If our data was until 2019, the model performance score would have been much higher. 
-
-
-```python
-# visually compare actual and predictions
-fig, ax = plt.subplots(figsize=(10, 5))
-plt.plot(test['ds'], test['y'],  'k.', label='Actual')
-plt.plot(forecast['ds'], forecast['yhat'], label='Prediction')
-ax.set_xlim(pd.Timestamp('2019-01-01'), pd.Timestamp('2020-09-01'))
-ax.set_xlabel('ds')
-ax.set_ylabel('y')
-ax.legend()
-plt.grid(True, alpha=0.3)
-```
-
+However, this probably under-represents the general model performance because our data has a drastic change in the 
+middle of the test period which is a pattern that has never been seen before. If our data was until 2019, the model 
+performance score would have been much higher. 
 
     
 <div style="text-align:center">
@@ -566,7 +553,9 @@ plt.grid(True, alpha=0.3)
 
 ## 4.2. Cross validation
 
-Alternatively, we can perform cross validation. As previously discussed, time-series analysis strictly uses train data whose time range is always earlier than that of test data. Below is an example where we use 5 years of train data to predict 1 year of test data. Each cut-off point is equally spaced with 1 year gap.
+Alternatively, we can perform cross-validation. As previously discussed, time-series analysis strictly uses train 
+data whose time range is earlier than that of test data. Below is an example where we use 5 years of train data to 
+predict 1-year of test data. Each cut-off point is equally spaced with 1 year gap.
 
 
 <div style="text-align:center">
@@ -576,13 +565,15 @@ Alternatively, we can perform cross validation. As previously discussed, time-se
 </div>
 <br>
 
-Prophet also provides built-in model diagnostics tools to make it easy to perform this cross validation. You just need to define three parameters: horizon, initial, and period. The latter two are optional.
+Prophet also provides built-in model diagnostics tools to make it easy to perform this cross-validation. You just 
+need to define three parameters: horizon, initial, and period. The latter two are optional.
 
 * horizon: test period of each fold  
 * initial: minimum training period to start with
 * period: time gap between cut-off dates
 
-Make sure to define these parameters in straing and in this format: 'X unit'. X is the number and unit is 'days' or 'secs', etc. that is compatiable with `pd.Timedelta`.
+Make sure to define these parameters in string and in this format: 'X unit'. X is the number and unit is 'days' or 
+'secs', etc. that is compatible with `pd.Timedelta`. For example, `10 days`.
 
 You can also define `parallel` to make the cross validation faster.
 
@@ -608,7 +599,8 @@ df_cv = cross_validation(m, initial=initial, period=period, horizon=horizon, par
 </pre>
 
 
-This is the predicted output using cross validation. There can be many predictions for the same timestamp if `period` is smaller than `horizon`.
+This is the predicted output using cross-validation. There can be many predictions for the same timestamp if `period`
+ is smaller than `horizon`.
 
 
 ```python
@@ -752,7 +744,9 @@ df_cv
 
 
 
-Below is different performance metrics for different rolling windows. As we did not define any rolling window, Prophet went ahead and calculated many different combinations and stacked up in rows. Each metrics are first calculated within each rolling window and then averaged across many available windows. 
+Below are different performance metrics for different rolling windows. As we did not define any rolling window, Prophet
+ went ahead and calculated many different combinations and stacked them up in rows (e.g. 53 days, ..., 365 days). Each 
+ metric is first calculated within each rolling window and then averaged across many available windows. 
 
 
 ```python
@@ -937,7 +931,10 @@ a = add_changepoints_to_plot(fig.gca(), m, forecast)
 <a id=season></a>
 # 6. Seasonality Mode
 
-The growth in trend can be additive (rate of change is linear) or multiplicative (rate changes over time). When you see the original data below, the amplitude of seasonality of the data is changing - smaller in the early years and bigger in the later years. So, this would be `multiplicative` growth case rather than `additive` growth case. We can adjust the `seasonality` parameter so we can take into account this effect. 
+The growth in trend can be additive (rate of change is linear) or multiplicative (rate changes over time). When you 
+see the original data, the amplitude of seasonality changes - smaller in the early years and 
+bigger in the later years. So, this would be a `multiplicative` growth case rather than an `additive` growth case. We 
+can adjust the `seasonality` parameter so we can take into account this effect. 
 
 
 ```python
@@ -946,6 +943,9 @@ m = Prophet(seasonality_mode='additive')
 # multiplicative mode
 m = Prophet(seasonality_mode='multiplicative')
 ```
+
+You can see that the blue lines (predictions) are more in line with the black dots (actuals) when in multiplicative 
+seasonality mode. 
     
 <div style="text-align:center">
 <img src="{{site.baseurl}}/images/2020-12-15-prophet-intro/output_44_1.png">
